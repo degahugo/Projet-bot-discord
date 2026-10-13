@@ -33,7 +33,7 @@ public record Role(String name) {
 
     @Override
     public String toString() {
-        return "Channel{" + "name='" + name + '}';
+        return "Role {" + "name='" + name + '}';
     }
 
 }
