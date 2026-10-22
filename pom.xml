@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  POM RACINE = PARENT + AGRÉGATEUR
+
+  - Agrégateur : <modules> liste ce qu'il faut construire (Maven trouve l'ordre seul).
+  - Parent     : chaque module hérite des versions et de la configuration ci-dessous.
+                 => une version de Quarkus / Java à changer à UN seul endroit.
+
+  Construire tout :            ./mvnw verify
+  Un seul service (+ ses deps) : ./mvnw verify -pl services/bot-api -am
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.acme</groupId>
+    <artifactId>projet-bot-discord-parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Projet bot Discord</name>
+
+    <modules>
+        <!-- Outils de build (jamais déployés) -->
+        <module>tools/entity-annotations</module>
+        <module>tools/entity-processor</module>
+        <!-- Micro-services (chacun déployé séparément) -->
+        <module>services/bot-api</module>
+        <!-- <module>services/discord-bot</module>  ajouté au commit 5 -->
+    </modules>
+
+    <properties>
+        <!-- Langage -->
+        <maven.compiler.release>25</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- Plateforme Quarkus : la changer ici met à jour TOUS les services -->
+        <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
+        <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
+        <quarkus.platform.version>3.39.4</quarkus.platform.version>
+
+        <!-- Bibliothèques hors Quarkus -->
+        <auto-service.version>1.1.1</auto-service.version>
+        <discord4j.version>3.3.0-RC3</discord4j.version>
+
+        <!-- Plugins -->
+        <compiler-plugin.version>3.15.0</compiler-plugin.version>
+        <surefire-plugin.version>3.5.6</surefire-plugin.version>
+        <enforcer-plugin.version>3.5.0</enforcer-plugin.version>
+
+        <skipITs>true</skipITs>
+        <!-- Valeur par défaut de @{argLine} (surefire/failsafe). Sans elle, la JVM des tests
+             reçoit le texte "@{argLine}" tel quel et refuse de démarrer. -->
+        <argLine></argLine>
+    </properties>
+
+    <!--
+      dependencyManagement : DÉCLARE les versions, n'ajoute rien.
+      Les modules écrivent juste groupId + artifactId, sans <version>.
+    -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>${quarkus.platform.group-id}</groupId>
+                <artifactId>${quarkus.platform.artifact-id}</artifactId>
+                <version>${quarkus.platform.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Nos propres modules : toujours la version du projet -->
+            <dependency>
+                <groupId>org.acme.tools</groupId>
+                <artifactId>entity-annotations</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.acme.tools</groupId>
+                <artifactId>entity-processor</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.auto.service</groupId>
+                <artifactId>auto-service-annotations</artifactId>
+                <version>${auto-service.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.discord4j</groupId>
+                <artifactId>discord4j-core</artifactId>
+                <version>${discord4j.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <!-- pluginManagement : même principe, configuration par défaut des plugins -->
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>${quarkus.platform.group-id}</groupId>
+                    <artifactId>quarkus-maven-plugin</artifactId>
+                    <version>${quarkus.platform.version}</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${compiler-plugin.version}</version>
+                    <configuration>
+                        <parameters>true</parameters>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${surefire-plugin.version}</version>
+                    <configuration>
+                        <argLine>@{argLine}</argLine>
+                        <systemPropertyVariables>
+                            <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                            <maven.home>${maven.home}</maven.home>
+                        </systemPropertyVariables>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${surefire-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <argLine>@{argLine}</argLine>
+                        <systemPropertyVariables>
+                            <native.image.path>${project.build.directory}/${project.build.finalName}-runner</native.image.path>
+                            <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                            <maven.home>${maven.home}</maven.home>
+                        </systemPropertyVariables>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <!--
+              Garde-fous vérifiés à CHAQUE build, pour tous les modules.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${enforcer-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>enforce-rules</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>[25,)</version>
+                                </requireJavaVersion>
+                                <requireMavenVersion>
+                                    <version>[3.9,)</version>
+                                </requireMavenVersion>
+                                <!--
+                                  Règle d'architecture : un micro-service ne dépend JAMAIS
+                                  du code d'un autre micro-service. Ils communiquent en REST.
+                                  Tous les services ont le groupId org.acme.services.
+                                -->
+                                <bannedDependencies>
+                                    <excludes>
+                                        <exclude>org.acme.services</exclude>
+                                    </excludes>
+                                    <message>Un micro-service ne doit pas dépendre d'un autre micro-service : passez par l'API REST.</message>
+                                </bannedDependencies>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>native</id>
+            <activation>
+                <property>
+                    <name>native</name>
+                </property>
+            </activation>
+            <properties>
+                <quarkus.package.jar.enabled>false</quarkus.package.jar.enabled>
+                <skipITs>false</skipITs>
+                <quarkus.native.enabled>true</quarkus.native.enabled>
+            </properties>
+        </profile>
+    </profiles>
+</project>

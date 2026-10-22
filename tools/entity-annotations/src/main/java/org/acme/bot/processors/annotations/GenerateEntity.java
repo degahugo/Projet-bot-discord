@@ -17,6 +17,7 @@ public @interface GenerateEntity {
     /**
      *
      * The name of the Entity to which the annotated field should be added.
+     * If empty, the name of the record in lower case is used (Role -> role)
      * @return the name of the Entity
      */
     String value() default "";
