@@ -1,6 +1,7 @@
 package org.acme.bot.domain.models;
 
-import java.util.Date;
+import org.acme.bot.processors.annotations.GenerateEntity;
+import org.acme.bot.processors.annotations.Unique;
 
 /**
  *
@@ -9,17 +10,21 @@ import java.util.Date;
  *</p>
  *<ul>
  *<li>Utilizing Java Records for concise, immutable data carriers.</li>
+ *<li>The JPA entity RoleEntity is generated from this record by the ProcessorEntity (@GenerateEntity).</li>
  * </ul>
  *
  * @param name
  *
  */
-public record Role(String name) {
+@GenerateEntity("roles")
+public record Role(@Unique String name) {
 
     public Role{
-        if (name == null) {
+        if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("name cannot be null or empty");
         }
+        // " Admin " and "Admin" are the same role
+        name = name.strip();
     }
 
     /**
@@ -33,7 +38,7 @@ public record Role(String name) {
 
     @Override
     public String toString() {
-        return "Role {" + "name='" + name + '}';
+        return "Role {" + "name='" + name + "'}";
     }
 
 }

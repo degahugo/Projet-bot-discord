@@ -8,7 +8,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
  *DTO used for role creation requests
  */
 
-@Schema(description="Request object to create a new product")
+@Schema(description="Request object to create a new role")
 public record CreateRoleRequest(@Schema(description="Name of the role",examples={"Admin"})
                                 @NotBlank(message="Name is required")
                                 String name)

@@ -6,7 +6,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
  *
- * Data Transfert Object representing a product in the public API
+ * Data Transfert Object representing a role in the public API
  *<ul>
  *<li> Read-only contract returnd to API consumers</li>
  *<li>Ensures API stability regardless of internal refactoring</li>

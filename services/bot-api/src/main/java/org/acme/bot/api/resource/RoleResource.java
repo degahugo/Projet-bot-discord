@@ -14,7 +14,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.hibernate.annotations.Parameter;
 
 import java.util.List;
 
@@ -52,12 +51,28 @@ public class RoleResource {
 
     /**
      *
+     * @return the role with this name, or 404 if it does not exist
+     *
+     */
+
+    @GET
+    @Path("/{name}")
+    @Operation(summary="Get a role by its name", description="Returns the role with this name")
+    @APIResponse(responseCode="200",description="Role found",content=@Content(mediaType="application/json",schema=@Schema(implementation=RoleDTO.class)))
+    @APIResponse(responseCode="404",description="name not found")
+    public RoleDTO getByName(
+            @PathParam("name")String name){
+        return service.getByName(name);
+    }
+
+    /**
+     *
      * Create a new Role
      *
      */
 
     @POST
-    @Operation(summary="Create a new Role",description="Validates input and persists a new product")
+    @Operation(summary="Create a new Role",description="Validates input and persists a new role")
     @APIResponse(responseCode="201",description="Role succesfully created",content=@Content(mediaType="application/json",schema=@Schema(implementation=RoleDTO.class)))
     @APIResponse(responseCode="400",description="Invalid input or domain validation failure")
     @APIResponse(responseCode="409",description="name already exists")
@@ -73,7 +88,7 @@ public class RoleResource {
 
     @DELETE
     @Path("/{name}")
-    @Operation(summary="Create a new product",description="Validates input and persists a new product")
+    @Operation(summary="Delete a role",description="Deletes the role with this name")
     @APIResponse(responseCode="204",description="Role deleted")
     @APIResponse(responseCode="404",description="name not found")
     public Response delete(
