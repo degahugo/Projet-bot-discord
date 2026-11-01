@@ -60,8 +60,7 @@ public class RoleResource {
     @Operation(summary="Get a role by its name", description="Returns the role with this name")
     @APIResponse(responseCode="200",description="Role found",content=@Content(mediaType="application/json",schema=@Schema(implementation=RoleDTO.class)))
     @APIResponse(responseCode="404",description="name not found")
-    public RoleDTO getByName(
-            @PathParam("name")String name){
+    public RoleDTO getByName(@PathParam("name")String name){
         return service.getByName(name);
     }
 
@@ -91,8 +90,7 @@ public class RoleResource {
     @Operation(summary="Delete a role",description="Deletes the role with this name")
     @APIResponse(responseCode="204",description="Role deleted")
     @APIResponse(responseCode="404",description="name not found")
-    public Response delete(
-            @PathParam("name")String name){
+    public Response delete(@PathParam("name")String name){
         service.delete(name);
         return Response.noContent().build();
     }

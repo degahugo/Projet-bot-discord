@@ -26,7 +26,7 @@
         <module>tools/entity-processor</module>
         <!-- Micro-services (chacun déployé séparément) -->
         <module>services/bot-api</module>
-        <!-- <module>services/discord-bot</module>  ajouté au commit 5 -->
+        <module>services/discord-bot</module>
     </modules>
 
     <properties>
