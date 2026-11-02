@@ -1,8 +1,8 @@
 package org.acme.bot.api.error;
 
 import jakarta.ws.rs.core.Response;
-import org.acme.bot.application.exceptions.RoleAlreadyExistsException;
-import org.acme.bot.application.exceptions.RoleNotFoundException;
+import org.acme.bot.application.exceptions.ModelAlreadyExistsException;
+import org.acme.bot.application.exceptions.ModelNotFoundException;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 
 /**
@@ -16,21 +16,21 @@ public class ErrorMappers {
 
     /**
      *
-     * Role not found -> 404
+     * Model not found -> 404
      *
      */
     @ServerExceptionMapper
-    public Response notFound(RoleNotFoundException e) {
+    public Response notFound(ModelNotFoundException e) {
         return error(Response.Status.NOT_FOUND, e.getMessage());
     }
 
     /**
      *
-     * Role already exists -> 409
+     * Model already exists -> 409
      *
      */
     @ServerExceptionMapper
-    public Response conflict(RoleAlreadyExistsException e) {
+    public Response conflict(ModelAlreadyExistsException e) {
         return error(Response.Status.CONFLICT, e.getMessage());
     }
 
