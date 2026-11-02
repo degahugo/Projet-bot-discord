@@ -22,6 +22,10 @@
 
 #### Démarrage du bot discord uniquement : 
 
+```shell script
+    ./mvnw install -DskipTests
+```
+
 ```shell script 
   ./mvnw quarkus:dev -pl services/discord-bot
 ```

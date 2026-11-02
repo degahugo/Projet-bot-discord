@@ -19,6 +19,7 @@ import org.acme.bot.processors.annotations.*;
 @GenerateRepository
 @GenerateMapper
 @GenerateService
+@GenerateResource
 public record Role(@Unique @DTO("DTO") @DTO("CreateRequest") String name) {
 
     public Role{
