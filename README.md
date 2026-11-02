@@ -17,3 +17,14 @@
 - Il contient la branche principale (main). 
 - Les features sont codées sur des branches séparées puis après un pull request sont mergé vers le main.
 
+
+## Commandes : 
+
+#### Démarrage du bot discord uniquement : 
+
+```shell script 
+  ./mvnw quarkus:dev -pl services/discord-bot
+```
+
+
+
