@@ -4,7 +4,7 @@ package org.acme.bot.application.services;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import org.acme.bot.application.dto.RoleDTO;
-import org.acme.bot.application.dto.usecases.CreateRoleRequest;
+import org.acme.bot.application.dto.RoleCreateRequest;
 import org.acme.bot.application.exceptions.RoleAlreadyExistsException;
 import org.acme.bot.application.exceptions.RoleNotFoundException;
 import org.acme.bot.infrastructure.mapper.RoleMapper;
@@ -58,7 +58,7 @@ public class RoleService {
      */
 
     @Transactional
-    public RoleDTO create(CreateRoleRequest request){
+    public RoleDTO create(RoleCreateRequest request){
         //Step 1 : Mapping (Validation happens inside Mapper/Domain Record)
         RoleEntity entity=RoleMapper.toEntity(request);
 

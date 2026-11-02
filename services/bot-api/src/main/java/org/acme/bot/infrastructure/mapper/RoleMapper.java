@@ -2,7 +2,7 @@ package org.acme.bot.infrastructure.mapper;
 
 
 import org.acme.bot.application.dto.RoleDTO;
-import org.acme.bot.application.dto.usecases.CreateRoleRequest;
+import org.acme.bot.application.dto.RoleCreateRequest;
 import org.acme.bot.domain.models.Role;
 import org.acme.bot.infrastructure.persistence.entity.RoleEntity;
 
@@ -36,7 +36,7 @@ public final class RoleMapper {
      *
      */
 
-    public static RoleEntity toEntity(CreateRoleRequest request){
+    public static RoleEntity toEntity(RoleCreateRequest request){
         // Step 1 : Create a Domain Object (Domain Rule Validation)
         var domain = Role.of(request.name());
 

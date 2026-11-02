@@ -1,5 +1,6 @@
 package org.acme.bot.domain.models;
 
+import org.acme.bot.processors.annotations.DTO;
 import org.acme.bot.processors.annotations.GenerateEntity;
 import org.acme.bot.processors.annotations.GenerateRepository;
 import org.acme.bot.processors.annotations.Unique;
@@ -19,7 +20,8 @@ import org.acme.bot.processors.annotations.Unique;
  */
 @GenerateEntity("roles")
 @GenerateRepository
-public record Role(@Unique String name) {
+
+public record Role(@Unique @DTO("DTO") @DTO("CreateRequest") String name) {
 
     public Role{
         if (name == null || name.isBlank()) {

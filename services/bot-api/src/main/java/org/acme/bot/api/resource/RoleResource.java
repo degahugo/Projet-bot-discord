@@ -6,7 +6,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.acme.bot.application.dto.RoleDTO;
-import org.acme.bot.application.dto.usecases.CreateRoleRequest;
+import org.acme.bot.application.dto.RoleCreateRequest;
 import org.acme.bot.application.services.RoleService;
 import org.eclipse.microprofile.openapi.annotations.*;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
@@ -75,7 +75,7 @@ public class RoleResource {
     @APIResponse(responseCode="201",description="Role succesfully created",content=@Content(mediaType="application/json",schema=@Schema(implementation=RoleDTO.class)))
     @APIResponse(responseCode="400",description="Invalid input or domain validation failure")
     @APIResponse(responseCode="409",description="name already exists")
-    public Response create(@Valid CreateRoleRequest request){
+    public Response create(@Valid RoleCreateRequest request){
         RoleDTO created=service.create(request);
         return Response.status(Response.Status.CREATED).entity(created).build();
     }
