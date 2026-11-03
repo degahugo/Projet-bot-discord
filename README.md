@@ -30,5 +30,10 @@
   ./mvnw quarkus:dev -pl services/discord-bot
 ```
 
+#### lister tous les fichiers générés par les processeurs d'annotations
+```shell script
+    find services/bot-api/target/generated-sources -name "*.java" | sort
+```
+
 
 

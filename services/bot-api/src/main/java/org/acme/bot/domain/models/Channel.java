@@ -1,6 +1,8 @@
 package org.acme.bot.domain.models;
 
 
+import org.acme.bot.processors.annotations.*;
+
 /**
  *
  * <p>
@@ -12,8 +14,12 @@ package org.acme.bot.domain.models;
  *
  * @param name
  */
-public record Channel(String name) {
-
+@GenerateEntity("channels")
+@GenerateRepository
+@GenerateMapper
+@GenerateService
+@GenerateResource
+public record Channel(@Unique @DTO("DTO") @DTO("CreateRequest") String name) {
     public Channel{
         if(name== null){
             throw new IllegalArgumentException("name cannot be null or empty");
