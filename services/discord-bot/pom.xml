@@ -2,6 +2,8 @@
 <!--
   Micro-service II : bot Discord.
   Écoute Discord (WebSocket) et appelle bot-api en REST. N'a PAS de base de données.
+  Le client REST vers bot-api est GÉNÉRÉ à partir du contrat contracts/openapi.yaml
+  (publié par bot-api) : aucune dépendance de code vers bot-api.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -24,8 +26,7 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-arc</artifactId>
         </dependency>
-        <!-- Pour /q/health ; et plus tard le client REST vers bot-api :
-             quarkus-rest-client-jackson -->
+        <!-- Pour /q/health -->
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-rest</artifactId>
@@ -33,6 +34,18 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-smallrye-health</artifactId>
+        </dependency>
+
+        <!-- Client REST vers bot-api + conversion JSON.
+     Obligatoire même avec quarkus-openapi-generator (elle ne l'apporte pas). -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-rest-client-jackson</artifactId>
+        </dependency>
+        <!-- Génère RoleApi, ChannelApi, GuildApi et les DTO depuis contracts/openapi.yaml -->
+        <dependency>
+            <groupId>io.quarkiverse.openapi.generator</groupId>
+            <artifactId>quarkus-openapi-generator</artifactId>
         </dependency>
 
         <!-- Discord. Ses logs (SLF4J) passent par le système de logs de Quarkus :
@@ -60,6 +73,16 @@
                 <groupId>${quarkus.platform.group-id}</groupId>
                 <artifactId>quarkus-maven-plugin</artifactId>
                 <extensions>true</extensions>
+                <!-- generate-code : c'est ici que quarkus-openapi-generator écrit le client -->
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>build</goal>
+                            <goal>generate-code</goal>
+                            <goal>generate-code-tests</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>

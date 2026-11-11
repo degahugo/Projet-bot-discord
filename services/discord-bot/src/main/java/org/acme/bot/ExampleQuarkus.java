@@ -12,6 +12,10 @@ import io.quarkus.runtime.Startup;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
+import org.acme.bot.command.CommandHandler;
+import org.acme.bot.command.RoleCommandHandler;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import reactor.core.publisher.Mono;
 
@@ -30,6 +34,10 @@ public class ExampleQuarkus {
     // false in the tests (application.properties) : we don't connect to Discord
     @ConfigProperty(name = "discord.enabled", defaultValue = "true")
     boolean enabled;
+
+    // CDI gives ALL the beans implementing CommandHandler (PingCommandHandler, RoleCommandHandler...)
+    @Inject
+    Instance<CommandHandler> commandHandlers;
 
     @PostConstruct
     public void start() {
@@ -63,23 +71,32 @@ public class ExampleQuarkus {
                 })
         ).then();
 
-        Mono<Void> handlePing = gateway.on(MessageCreateEvent.class, event -> {
-            Message message = event.getMessage();
 
-            if (message.getAuthor().map(User::isBot).orElse(true)) {
-                return Mono.empty();
-            }
+        // Every message is sent to the first CommandHandler which supports it
+        Mono<Void> handleCommands = gateway.on(MessageCreateEvent.class, this::dispatch).then();
+            printOnLogin.subscribe();
+            handleCommands.subscribe();
+    }
 
-            if (message.getContent().equalsIgnoreCase("!ping")) {
-                return message.getChannel()
-                        .flatMap(channel -> channel.createMessage("pong!"));
-            }
+    /**
+     *
+     * Finds the command matching the message and runs it. Unknown messages are ignored.
+     *
+     */
+    private Mono<Void> dispatch(MessageCreateEvent event) {
+        Message message = event.getMessage();
 
+        if (message.getAuthor().map(User::isBot).orElse(true)) {
             return Mono.empty();
-        }).then();
+        }
 
-        printOnLogin.subscribe();
-        handlePing.subscribe();
+        String content = message.getContent().strip();
+
+        return commandHandlers.stream()
+                .filter(handler -> handler.supports(content))
+                .findFirst()
+                .map(handler -> handler.handle(message))
+                .orElse(Mono.empty());
     }
 
     @PreDestroy

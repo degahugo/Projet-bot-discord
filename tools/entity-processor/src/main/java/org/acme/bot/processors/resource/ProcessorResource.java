@@ -91,7 +91,7 @@ public class ProcessorResource extends AbstractProcessor {
                          *
                          */
                         @GET
-                        @Operation(summary="Get all {{Model}}", description="Returns a list of all {{Model}}")
+                        @Operation(operationId="getAll{{Model}}",summary="Get all {{Model}}", description="Returns a list of all {{Model}}")
                         @APIResponse(responseCode="200",description="List of {{Model}}",content=@Content(mediaType="application/json",schema=@Schema(implementation={{Model}}DTO.class,type=SchemaType.ARRAY)))
                         public List<{{Model}}DTO> getAll(){
                             return service.getAll();
@@ -104,7 +104,7 @@ public class ProcessorResource extends AbstractProcessor {
                          */
                         @GET
                         @Path("/{{{key}}}")
-                        @Operation(summary="Get a {{Model}} by its {{key}}", description="Returns the {{Model}} with this {{key}}")
+                        @Operation(operationId="get{{Model}}By{{Key}}",summary="Get a {{Model}} by its {{key}}", description="Returns the {{Model}} with this {{key}}")
                         @APIResponse(responseCode="200",description="{{Model}} found",content=@Content(mediaType="application/json",schema=@Schema(implementation={{Model}}DTO.class)))
                         @APIResponse(responseCode="404",description="{{key}} not found")
                         public {{Model}}DTO getBy{{Key}}(@PathParam("{{key}}") {{KeyType}} {{key}}){
@@ -117,7 +117,7 @@ public class ProcessorResource extends AbstractProcessor {
                          *
                          */
                         @POST
-                        @Operation(summary="Create a new {{Model}}",description="Validates input and persists a new {{Model}}")
+                        @Operation(operationId="create{{Model}}",summary="Create a new {{Model}}",description="Validates input and persists a new {{Model}}")
                         @APIResponse(responseCode="201",description="{{Model}} succesfully created",content=@Content(mediaType="application/json",schema=@Schema(implementation={{Model}}DTO.class)))
                         @APIResponse(responseCode="400",description="Invalid input or domain validation failure")
                         @APIResponse(responseCode="409",description="{{key}} already exists")
@@ -132,7 +132,7 @@ public class ProcessorResource extends AbstractProcessor {
                          */
                         @DELETE
                         @Path("/{{{key}}}")
-                        @Operation(summary="Delete a {{Model}}",description="Deletes the {{Model}} with this {{key}}")
+                        @Operation(operationId="delete{{Model}}",summary="Delete a {{Model}}",description="Deletes the {{Model}} with this {{key}}")
                         @APIResponse(responseCode="204",description="{{Model}} deleted")
                         @APIResponse(responseCode="404",description="{{key}} not found")
                         public Response delete(@PathParam("{{key}}") {{KeyType}} {{key}}){

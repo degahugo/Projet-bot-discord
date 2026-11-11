@@ -1,0 +1,284 @@
+---
+openapi: 3.1.0
+tags:
+- name: Channel
+  description: Validated and documented API for Channel
+- name: Guild
+  description: Validated and documented API for Guild
+- name: Role
+  description: Validated and documented API for Role
+components:
+  schemas:
+    ChannelCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+    ChannelDTO:
+      type: object
+      properties:
+        name:
+          type: string
+    GuildCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+    GuildDTO:
+      type: object
+      properties:
+        name:
+          type: string
+    RoleCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+    RoleDTO:
+      type: object
+      properties:
+        name:
+          type: string
+paths:
+  /api/v1/channels:
+    get:
+      summary: Get all Channel
+      description: Returns a list of all Channel
+      operationId: getAllChannel
+      tags:
+      - Channel
+      responses:
+        "200":
+          description: List of Channel
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ChannelDTO"
+    post:
+      summary: Create a new Channel
+      description: Validates input and persists a new Channel
+      operationId: createChannel
+      tags:
+      - Channel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChannelCreateRequest"
+        required: true
+      responses:
+        "201":
+          description: Channel succesfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChannelDTO"
+        "400":
+          description: Invalid input or domain validation failure
+        "409":
+          description: name already exists
+  /api/v1/channels/{name}:
+    get:
+      summary: Get a Channel by its name
+      description: Returns the Channel with this name
+      operationId: getChannelByName
+      tags:
+      - Channel
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Channel found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChannelDTO"
+        "404":
+          description: name not found
+    delete:
+      summary: Delete a Channel
+      description: Deletes the Channel with this name
+      operationId: deleteChannel
+      tags:
+      - Channel
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Channel deleted
+        "404":
+          description: name not found
+  /api/v1/guild:
+    get:
+      summary: Get all Guild
+      description: Returns a list of all Guild
+      operationId: getAllGuild
+      tags:
+      - Guild
+      responses:
+        "200":
+          description: List of Guild
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GuildDTO"
+    post:
+      summary: Create a new Guild
+      description: Validates input and persists a new Guild
+      operationId: createGuild
+      tags:
+      - Guild
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GuildCreateRequest"
+        required: true
+      responses:
+        "201":
+          description: Guild succesfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GuildDTO"
+        "400":
+          description: Invalid input or domain validation failure
+        "409":
+          description: name already exists
+  /api/v1/guild/{name}:
+    get:
+      summary: Get a Guild by its name
+      description: Returns the Guild with this name
+      operationId: getGuildByName
+      tags:
+      - Guild
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Guild found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GuildDTO"
+        "404":
+          description: name not found
+    delete:
+      summary: Delete a Guild
+      description: Deletes the Guild with this name
+      operationId: deleteGuild
+      tags:
+      - Guild
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Guild deleted
+        "404":
+          description: name not found
+  /api/v1/roles:
+    get:
+      summary: Get all Role
+      description: Returns a list of all Role
+      operationId: getAllRole
+      tags:
+      - Role
+      responses:
+        "200":
+          description: List of Role
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RoleDTO"
+    post:
+      summary: Create a new Role
+      description: Validates input and persists a new Role
+      operationId: createRole
+      tags:
+      - Role
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RoleCreateRequest"
+        required: true
+      responses:
+        "201":
+          description: Role succesfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoleDTO"
+        "400":
+          description: Invalid input or domain validation failure
+        "409":
+          description: name already exists
+  /api/v1/roles/{name}:
+    get:
+      summary: Get a Role by its name
+      description: Returns the Role with this name
+      operationId: getRoleByName
+      tags:
+      - Role
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Role found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoleDTO"
+        "404":
+          description: name not found
+    delete:
+      summary: Delete a Role
+      description: Deletes the Role with this name
+      operationId: deleteRole
+      tags:
+      - Role
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Role deleted
+        "404":
+          description: name not found
+info:
+  title: bot-api API
+  version: 1.0.0-SNAPSHOT
+servers:
+- url: http://localhost:8080
+  description: Auto generated value
+- url: http://0.0.0.0:8080
+  description: Auto generated value
